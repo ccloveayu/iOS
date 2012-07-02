@@ -1,15 +1,207 @@
-# Xcode
-build/*
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-*.xcworkspace
-!default.xcworkspace
-xcuserdata
-profile
-*.moved-aside
+//
+//  MergeSortViewController.m
+//  MergeSort
+//
+//  Created by gei3 on 25/06/12.
+//  Copyright 2012 __MyCompanyName__. All rights reserved.
+//
+
+#import "MergeSortViewController.h"
+#import "MergeSortAppDelegate.h"
+
+@implementation MergeSortViewController
+
+//10 cases pour entrer la liste de valeur a trier
+@synthesize a1;
+@synthesize a2;
+@synthesize a3;
+@synthesize a4,a5,a6,a7,a8,a9,a10;
+
+@synthesize result;
+
+
+
+//algoritheme de trier
+-(void)merge:(NSMutableArray *)array :(int)start :(int)mid :(int)end{
+  
+	//separer le tableau en deux
+	int n1 = mid-start+1;
+	int n2 = end-mid;
+	id temp;
+	int i;
+	
+	
+	NSMutableArray *newArray1 = [[NSMutableArray alloc] init];
+	NSMutableArray *newArray2 = [[NSMutableArray alloc] init];	
+	
+	
+	//copier la sous tableau arriere a une nouvelle tableau1
+	for (i=0; i < n1; i++) {
+		int t1=start+i;
+		temp = [[array objectAtIndex:t1] copy];
+		[newArray1 addObject: temp];	
+	}
+
+	
+	
+	//copier la sous tableau deriere a une autre nouvelle tableau2
+	for (i=0; i < n2; i++) {
+		int t2=mid+i+1;
+		temp = [[array objectAtIndex:t2] copy];	
+		[newArray2 addObject:temp];	
+		
+	}
+	
+	
+	//parceque on veut le trie par lùodre croissant, on met lafin des sous tableaus mille, comme infini
+	[newArray1 insertObject:@"1000" atIndex:n1];
+	[newArray2 insertObject:@"1000" atIndex:n2];	
+		
+	//comparer chaque element entre les deux nouvelle tableaux, et metre les elements aux position correspendant dans la tableau vieux
+	for (int k=start, i =0,  j=0 ; k<=end; k++) {
+		
+		if ([[newArray1 objectAtIndex:i] intValue] <=[[newArray2 objectAtIndex:j]intValue]) {
+			[array replaceObjectAtIndex: k withObject:[newArray1 objectAtIndex:i]]; 
+			i++;
+		}
+		else {
+			[array replaceObjectAtIndex: k withObject:[newArray2 objectAtIndex:j]]; 
+			j++;
+		}
+
+	}
+	
+	
+}
+
+//separer la tableau dans le plus petit parties; trier les sous tableau; fusioner les sous tableau qui est deja trie
+//c'est une facon recuresive
+-(void) mergeSort:(NSMutableArray *)array :(int)start :(int)end{
+	
+	if (start < end){  
+		int i = (end + start)/2;
+		int t = i + 1;
+		
+		self =[super init];
+		
+		//trier la parie arriere
+		[self mergeSort:array :start :i];
+
+		//trier la partie deriere
+		//[self mergeSort:array:start:i];
+		//int t=i+1;　　　　　　
+		[self mergeSort:array:t:end];	
+		
+		//fusioner les deux partie
+		[self merge:array:start:i:end];	  
+	}  	
+	
+	
+}
+
+-(IBAction)sortButtonPresed{
+	//initialiser la tableau(type de NSMutableArray; parceque NSMutableArray est plus flexible)
+	
+	NSMutableArray *array = [[NSMutableArray alloc] init];
+
+	
+	NSString *A1 = a1.text;	
+	NSString *A2 = a2.text;	
+	NSString *A3 = a3.text;	
+	NSString *A4 = a4.text;		
+	NSString *A5 = a5.text;
+	NSString *A6 = a6.text;	
+	NSString *A7 = a7.text;	
+	NSString *A8 = a8.text;	
+	NSString *A9 = a9.text;		
+	NSString *A10 = a10.text;	
+	
+	
+	
+	[array addObject: A1];	
+	[array addObject: A2];	
+	[array addObject: A3];	
+	[array addObject: A4];	
+	[array addObject: A5];	
+	[array addObject: A6];	
+	[array addObject: A7];	
+	[array addObject: A8];	
+	[array addObject: A9];	
+	[array addObject: A10];	
+	
+	
+	int start=0;
+	int end=[array count]-1; 
+	
+		
+	
+	//NSLog(@"newArray:%@ %@", start, end);		
+	self =[super init];
+	
+	//commencer de trier
+	[self mergeSort:array:start:end];	
+	
+	//afficher la tableau trie sur l'ecran et separer chaque valeur par virgule et espace
+	NSMutableString * resultText = [[NSMutableString alloc] init];
+	for (NSObject * obj in array)
+	{
+		[resultText appendString:[obj description]];
+		[resultText appendString:@", "];
+	}
+	
+	[result setText:resultText];
+	
+	
+	
+}
+
+
+// pour faire le clavier diparaitre
+- (IBAction)textFieldDoneEditing:(id)sender{
+	[sender resignFirstResponder];
+	
+}
+
+- (IBAction)backgroundTap:(id)sender{
+	[a1 resignFirstResponder];
+	[a2 resignFirstResponder];	
+	[a3 resignFirstResponder];
+	[a4 resignFirstResponder];		
+	[a5 resignFirstResponder];
+	[a6 resignFirstResponder];		
+	[a7 resignFirstResponder];
+	[a8 resignFirstResponder];		
+	[a9 resignFirstResponder];
+	[a10 resignFirstResponder];
+}
+
+- (void)didReceiveMemoryWarning {
+	// Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+	
+	// Release any cached data, images, etc that aren't in use.
+}
+
+- (void)viewDidUnload {
+	// Release any retained subviews of the main view.
+	// e.g. self.myOutlet = nil;
+}
+
+
+- (void)dealloc {
+	[a1 release]; 	
+	[a2 release]; 	
+    [a3 release];   
+	[a4 release];  
+	[a5 release]; 	
+	[a6 release]; 	
+    [a7 release];   
+	[a8 release]; 	
+	[a9 release];   
+	[a10 release]; 
+	
+	[super dealloc];
+}
+
+@end
+
